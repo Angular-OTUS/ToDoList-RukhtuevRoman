@@ -9,7 +9,8 @@
         "@schematics/angular:component": {
           "style": "scss",
           "skipTests": true,
-          "changeDetection": "OnPush"
+          "changeDetection": "OnPush",
+          "standalone": true
         }
       },
       "root": "",
@@ -28,9 +29,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.scss"
-            ]
+            "styles": ["src/styles.scss"]
           },
           "configurations": {
             "production": {
@@ -82,9 +81,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.scss"
-            ]
+            "styles": ["src/styles.scss"]
           }
         }
       }

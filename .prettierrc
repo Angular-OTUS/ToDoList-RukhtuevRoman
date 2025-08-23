@@ -1,0 +1,23 @@
+{
+  "tabWidth": 4,
+  "useTabs": false,
+  "bracketSpacing": true,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "printWidth": 120,
+  "endOfLine": "lf",
+  "overrides": [
+    {
+      "files": "*.ts",
+      "options": {
+          "parser": "typescript"
+      }
+    },
+    {
+      "files": "*.html",
+      "options": {
+          "parser": "angular"
+      }
+    }
+  ]
+}

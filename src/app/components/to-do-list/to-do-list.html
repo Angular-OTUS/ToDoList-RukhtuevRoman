@@ -1,0 +1,25 @@
+<div class="task-manager">
+    <h1 class="task-title">{{ commonLabels.appTitle }}</h1>
+    <ul class="task-list">
+        @for (task of tasks; track task.id) {
+            <li class="task-item">
+                <span class="task-text">{{ task.text }}</span>
+                <button type="button" (click)="onDelete(task.id)" class="delete-btn" [title]="formLabels.delete">
+                    ×
+                </button>
+            </li>
+        }
+    </ul>
+    <div class="add-task-container">
+        <input
+            type="text"
+            [(ngModel)]="newTaskText"
+            [placeholder]="formLabels.addPlaceholder"
+            (keyup.enter)="onAdd()"
+            class="task-input"
+        />
+        <button type="button" [disabled]="!newTaskText.trim()" (click)="onAdd()" class="add-btn">
+            {{ formLabels.add }}
+        </button>
+    </div>
+</div>

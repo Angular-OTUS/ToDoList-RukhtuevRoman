@@ -2,23 +2,16 @@
     <h1 class="task-title">{{ commonLabels.appTitle }}</h1>
     <ul class="task-list">
         @for (task of tasks; track task.id) {
-            <li class="task-item">
-                <span class="task-text">{{ task.text }}</span>
-                <button type="button" (click)="onDelete(task.id)" class="delete-btn" [title]="formLabels.delete">
-                    ×
-                </button>
+            <li>
+                <app-to-do-list-item [task]="task" (delete)="onDelete(task.id)"></app-to-do-list-item>
             </li>
         }
     </ul>
     <div class="add-task-container">
-        <input
-            type="text"
-            [(ngModel)]="newTaskText"
-            [placeholder]="formLabels.addPlaceholder"
-            (keyup.enter)="onAdd()"
-            class="task-input"
-        />
-        <button type="button" [disabled]="!newTaskText.trim()" (click)="onAdd()" class="add-btn">
+        <mat-form-field class="add-task-form-field">
+            <input matInput [(ngModel)]="newTaskText" [placeholder]="formLabels.addPlaceholder" />
+        </mat-form-field>
+        <button type="button" [disabled]="!newTaskText.trim()" (click)="onAdd()" class="button button--add">
             {{ formLabels.add }}
         </button>
     </div>

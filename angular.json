@@ -29,7 +29,12 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.scss"]
+            "stylePreprocessorOptions": {
+              "includePaths": ["src/styles"]
+            },
+            "styles": [
+              "src/custom-theme.scss"
+            ]
           },
           "configurations": {
             "production": {

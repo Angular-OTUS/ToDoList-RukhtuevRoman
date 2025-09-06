@@ -1,29 +1,44 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { timer } from 'rxjs';
 import { COMMON_LABELS, FORM_LABELS } from '../../constants';
 import { ITask } from '../../interfaces';
 import { ToDoListItem } from '../to-do-list-item';
+import { Loader } from '../loader';
+import { Button } from '../button';
 
 @Component({
     selector: 'app-to-do-list',
     standalone: true,
-    imports: [FormsModule, ToDoListItem, MatFormFieldModule, MatInputModule],
+    imports: [FormsModule, ToDoListItem, MatFormFieldModule, MatInputModule, Loader, Button],
     templateUrl: './to-do-list.html',
     styleUrl: './to-do-list.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ToDoList {
+export class ToDoList implements OnInit {
     protected tasks: ITask[] = [
         { id: 1, text: 'Изучить JavaScript' },
         { id: 2, text: 'Изучить React' },
         { id: 3, text: 'Изучить Angular' },
         { id: 4, text: 'Работать фронтенд-разработчиком' },
     ];
+    protected isLoading: WritableSignal<boolean> = signal<boolean>(true);
     protected newTaskText: string = '';
     protected commonLabels: typeof COMMON_LABELS = COMMON_LABELS;
     protected formLabels: typeof FORM_LABELS = FORM_LABELS;
+
+    constructor(private destroyRef: DestroyRef) {}
+
+    public ngOnInit(): void {
+        timer(500)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => {
+                this.isLoading.set(false);
+            });
+    }
 
     protected onAdd(): void {
         if (this.newTaskText.trim()) {

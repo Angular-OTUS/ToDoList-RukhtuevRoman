@@ -1,5 +1,3 @@
-@use 'mixins/buttons' as button;
-
 .task-manager {
     max-width: 600px;
     margin: 0 auto;
@@ -27,15 +25,6 @@
     align-items: stretch;
 }
 
-// Инпут для ввода новой задачи и кнопка "Добавить" одной высоты
-:host {
-    ::ng-deep {
-        .add-task-form-field .mat-mdc-form-field-subscript-wrapper {
-            display: none;
-        }
-    }
-}
-
 .add-task-form-field {
     width: 100%;
 }
@@ -56,13 +45,12 @@
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
-.button {
-    @include button.button-base;
-
-    &--add {
-        @include button.button-variant(#02a325);
-        border-radius: 6px;
-        padding: 10px 20px;
+// Инпут для ввода новой задачи и кнопка "Добавить" одной высоты
+:host {
+    ::ng-deep {
+        .add-task-form-field .mat-mdc-form-field-subscript-wrapper {
+            display: none;
+        }
     }
 }
 

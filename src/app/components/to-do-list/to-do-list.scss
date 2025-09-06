@@ -1,3 +1,5 @@
+@use 'mixins/buttons' as button;
+
 .task-manager {
     max-width: 600px;
     margin: 0 auto;
@@ -19,55 +21,23 @@
     margin: 0 0 24px 0;
 }
 
-.task-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 16px;
-    margin-bottom: 8px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background: #f8f9fa;
-    transition: all 0.2s ease;
-}
-
-.task-item:hover {
-    background: #e9ecef;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.task-text {
-    flex: 1;
-    margin-right: 16px;
-    font-size: 16px;
-    color: #495057;
-}
-
-.delete-btn {
-    background: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 6px 12px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: background 0.2s ease;
-}
-
-.delete-btn:hover {
-    background: #c82333;
-}
-
-.delete-btn:active {
-    transform: scale(0.95);
-}
-
 .add-task-container {
     display: flex;
     gap: 12px;
-    align-items: center;
+    align-items: stretch;
+}
+
+// Инпут для ввода новой задачи и кнопка "Добавить" одной высоты
+:host {
+    ::ng-deep {
+        .add-task-form-field .mat-mdc-form-field-subscript-wrapper {
+            display: none;
+        }
+    }
+}
+
+.add-task-form-field {
+    width: 100%;
 }
 
 .task-input {
@@ -78,6 +48,7 @@
     font-size: 16px;
     outline: none;
     transition: border-color 0.2s ease;
+    box-sizing: border-box;
 }
 
 .task-input:focus {
@@ -85,33 +56,17 @@
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
-.add-btn {
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 500;
-    transition: background 0.2s ease;
+.button {
+    @include button.button-base;
+
+    &--add {
+        @include button.button-variant(#02a325);
+        border-radius: 6px;
+        padding: 10px 20px;
+    }
 }
 
-.add-btn:hover:not(:disabled) {
-    background: #0056b3;
-}
-
-.add-btn:disabled {
-    background: #6c757d;
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-
-.add-btn:active:not(:disabled) {
-    transform: scale(0.98);
-}
-
-@media (max-width: 480px) {
+@media (max-width: 520px) {
     .task-manager {
         padding: 16px;
     }
@@ -124,7 +79,7 @@
         width: 100%;
     }
 
-    .add-btn {
+    .button--add {
         width: 100%;
     }
 }

@@ -1,5 +1,3 @@
-@use 'mixins/buttons' as button;
-
 .task-item {
     display: flex;
     justify-content: space-between;
@@ -23,17 +21,4 @@
     margin-right: 16px;
     font-size: 16px;
     color: #495057;
-}
-
-.button {
-    @include button.button-base;
-
-    &--delete {
-        @include button.button-variant(#dc3545);
-        border-radius: 4px;
-        padding: 6px 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
 }

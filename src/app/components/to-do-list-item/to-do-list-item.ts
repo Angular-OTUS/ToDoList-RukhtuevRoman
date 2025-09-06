@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { FORM_LABELS } from '../../constants';
 import { ITask } from '../../interfaces';
+import { Button } from '../button';
 
 @Component({
     selector: 'app-to-do-list-item',
     standalone: true,
-    imports: [],
+    imports: [Button],
     templateUrl: './to-do-list-item.html',
     styleUrl: './to-do-list-item.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,

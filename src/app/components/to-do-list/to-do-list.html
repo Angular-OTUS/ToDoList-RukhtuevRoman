@@ -1,18 +1,22 @@
 <div class="task-manager">
     <h1 class="task-title">{{ commonLabels.appTitle }}</h1>
-    <ul class="task-list">
-        @for (task of tasks; track task.id) {
-            <li>
-                <app-to-do-list-item [task]="task" (delete)="onDelete(task.id)"></app-to-do-list-item>
-            </li>
-        }
-    </ul>
-    <div class="add-task-container">
-        <mat-form-field class="add-task-form-field">
-            <input matInput [(ngModel)]="newTaskText" [placeholder]="formLabels.addPlaceholder" />
-        </mat-form-field>
-        <button type="button" [disabled]="!newTaskText.trim()" (click)="onAdd()" class="button button--add">
-            {{ formLabels.add }}
-        </button>
-    </div>
+    @if (isLoading()) {
+        <app-loader [isLoading]="true"></app-loader>
+    } @else {
+        <ul class="task-list">
+            @for (task of tasks; track task.id) {
+                <li>
+                    <app-to-do-list-item [task]="task" (delete)="onDelete(task.id)"></app-to-do-list-item>
+                </li>
+            }
+        </ul>
+        <div class="add-task-container">
+            <mat-form-field class="add-task-form-field">
+                <input matInput [(ngModel)]="newTaskText" [placeholder]="formLabels.addPlaceholder" />
+            </mat-form-field>
+            <app-button [disabled]="!newTaskText.trim()" (click)="onAdd()" class="button button--add">
+                {{ formLabels.add }}
+            </app-button>
+        </div>
+    }
 </div>

@@ -3,20 +3,42 @@
     @if (isLoading()) {
         <app-loader [isLoading]="true"></app-loader>
     } @else {
-        <ul class="task-list">
-            @for (task of tasks; track task.id) {
-                <li>
-                    <app-to-do-list-item [task]="task" (delete)="onDelete(task.id)"></app-to-do-list-item>
-                </li>
-            }
-        </ul>
-        <div class="add-task-container">
-            <mat-form-field class="add-task-form-field">
-                <input matInput [(ngModel)]="newTaskText" [placeholder]="formLabels.addPlaceholder" />
-            </mat-form-field>
-            <app-button [disabled]="!newTaskText.trim()" (click)="onAdd()" class="button button--add">
-                {{ formLabels.add }}
-            </app-button>
+        <div class="task-list-wrapper">
+            <div class="task-list-container">
+                <ul class="task-list">
+                    @for (task of tasks; track task.id) {
+                        <li>
+                            <app-to-do-list-item
+                                [task]="task"
+                                [selectedItemId]="selectedItemId"
+                                (delete)="onDelete(task.id)"
+                                (click)="onSelectItem(task.id)"
+                            ></app-to-do-list-item>
+                        </li>
+                    }
+                </ul>
+                <div class="add-task-container">
+                    <mat-form-field class="add-task-form-field">
+                        <input matInput [(ngModel)]="newTaskText" [placeholder]="formLabels.addPlaceholder" />
+                    </mat-form-field>
+                    <mat-form-field class="add-task-description-form-field">
+                        <textarea
+                            matInput
+                            [(ngModel)]="newTaskDescription"
+                            [placeholder]="formLabels.addDescriptionPlaceholder"
+                        ></textarea>
+                    </mat-form-field>
+                    <app-button
+                        [tooltipText]="formLabels.addTooltip"
+                        [disabled]="!newTaskText.trim()"
+                        (click)="onAdd()"
+                        class="button button--add"
+                    >
+                        {{ formLabels.add }}
+                    </app-button>
+                </div>
+            </div>
+            <div class="description">{{ descriptionBySelectedItem }}</div>
         </div>
     }
 </div>

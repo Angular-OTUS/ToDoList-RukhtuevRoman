@@ -1,5 +1,8 @@
 export const FORM_LABELS = {
-    delete: 'Удалить задачу',
+    deleteTooltip: 'Удалить задачу',
     add: 'Добавить',
+    addTooltip: 'Добавить задачу',
     addPlaceholder: 'Введите новую задачу',
+    addDescriptionPlaceholder: 'Введите описание задачи',
+    listItemTooltip: 'Кликните, справа появится описание задачи',
 };

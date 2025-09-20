@@ -1,97 +1,86 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { timer } from 'rxjs';
+import { AsyncPipe } from '@angular/common';
+import { Observable, timer } from 'rxjs';
+import { TaskStoreService, ToastService } from '../../services';
 import { COMMON_LABELS, FORM_LABELS } from '../../constants';
 import { ITask } from '../../interfaces';
 import { ToDoListItem } from '../to-do-list-item';
 import { Loader } from '../loader';
 import { Button } from '../button';
+import { tasks } from './constants';
 
 @Component({
     selector: 'app-to-do-list',
     standalone: true,
-    imports: [FormsModule, ToDoListItem, MatFormFieldModule, MatInputModule, Loader, Button],
+    imports: [FormsModule, ToDoListItem, MatFormFieldModule, MatInputModule, Loader, Button, AsyncPipe],
     templateUrl: './to-do-list.html',
     styleUrl: './to-do-list.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToDoList implements OnInit {
-    protected tasks: ITask[] = [
-        {
-            id: 1,
-            text: 'Изучить JavaScript',
-            description: 'Изучить основы языка программирования JavaScript: переменные, циклы, функции, ООП',
-        },
-        {
-            id: 2,
-            text: 'Изучить React',
-            description: 'Изучить основы работы с библиотекой React: компоненты, хуки, роутер, работа с состоянием',
-        },
-        {
-            id: 3,
-            text: 'Изучить Angular',
-            description: 'Изучить основы работы с фреймворком Angular: компоненты, директивы, сигналы, RxJS',
-        },
-    ];
-    protected isLoading: WritableSignal<boolean> = signal<boolean>(true);
     protected newTaskText: string = '';
     protected newTaskDescription: string = '';
-    protected selectedItemId?: number;
     protected commonLabels: typeof COMMON_LABELS = COMMON_LABELS;
     protected formLabels: typeof FORM_LABELS = FORM_LABELS;
 
-    constructor(private destroyRef: DestroyRef) {}
+    protected tasks$: Observable<ITask[]>;
+    protected isLoading$: Observable<boolean>;
+    protected selectedItemId$: Observable<number>;
+    protected selectedTask$: Observable<ITask | undefined>;
+
+    constructor(
+        private taskStore: TaskStoreService,
+        private toastService: ToastService,
+        private destroyRef: DestroyRef,
+    ) {
+        this.tasks$ = this.taskStore.tasks$;
+        this.isLoading$ = this.taskStore.isLoading$;
+        this.selectedItemId$ = this.taskStore.selectedItemId$;
+        this.selectedTask$ = this.taskStore.selectedTask$;
+    }
 
     public ngOnInit(): void {
-        this.setInitialSelectedItem();
+        this.initializeTasks();
+    }
+
+    private initializeTasks(): void {
+        this.taskStore.setLoading(true);
 
         timer(500)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(() => {
-                this.isLoading.set(false);
+                this.taskStore.setTasks(tasks);
+                this.taskStore.setSelectedItemId(this.setInitialSelectedItem(tasks));
+                this.taskStore.setLoading(false);
             });
     }
 
-    protected onAdd(): void {
-        if (this.newTaskText.trim()) {
-            const newTask: ITask = {
-                id: this.nextId,
-                text: this.newTaskText.trim(),
-                description: this.newTaskDescription.trim(),
-            };
+    protected onAdd(event: Event): void {
+        event.preventDefault();
+        event.stopPropagation();
 
-            this.tasks.push(newTask);
+        if (this.newTaskText.trim()) {
+            this.taskStore.addTask(this.newTaskText, this.newTaskDescription);
             this.newTaskText = '';
+            this.newTaskDescription = '';
+            this.toastService.success(this.formLabels.addSuccess);
         }
     }
 
     protected onDelete(taskId: number): void {
-        this.tasks = this.tasks.filter((task) => task.id !== taskId);
+        this.taskStore.deleteTask(taskId);
+        this.toastService.success(this.formLabels.deleteSuccess);
     }
 
     protected onSelectItem(id: number) {
-        this.selectedItemId = id;
+        this.taskStore.setSelectedItemId(id);
     }
 
-    protected get descriptionBySelectedItem(): string {
-        const selectedItem = this.tasks.find((task) => task.id === this.selectedItemId);
-
-        return selectedItem?.description || '';
-    }
-
-    private get nextId(): number {
-        if (this.tasks.length === 0) {
-            return 1;
-        }
-        const maxId = Math.max(...this.tasks.map((task) => task.id));
-
-        return maxId + 1;
-    }
-
-    private setInitialSelectedItem(): void {
-        this.selectedItemId = this.tasks.length > 0 ? Math.min(...this.tasks.map((task) => task.id)) : undefined;
+    private setInitialSelectedItem(tasks: ITask[]): number {
+        return tasks.length > 0 ? Math.min(...tasks.map((task) => task.id)) : -1;
     }
 }

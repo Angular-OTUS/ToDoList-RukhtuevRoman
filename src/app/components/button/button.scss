@@ -17,4 +17,10 @@
         align-items: center;
         justify-content: center;
     }
+
+    &--save {
+        @include button.button-variant(#3583dc);
+        border-radius: 4px;
+        padding: 6px 12px;
+    }
 }

@@ -1,18 +1,22 @@
 <div class="task-manager">
     <h1 class="task-title">{{ commonLabels.appTitle }}</h1>
-    @if (isLoading()) {
+    @if (isLoading$ | async) {
         <app-loader [isLoading]="true"></app-loader>
     } @else {
         <div class="task-list-wrapper">
             <div class="task-list-container">
                 <ul class="task-list">
-                    @for (task of tasks; track task.id) {
+                    @for (task of tasks$ | async; track task.id) {
                         <li>
                             <app-to-do-list-item
                                 [task]="task"
-                                [selectedItemId]="selectedItemId"
+                                [selectedItemId]="(selectedItemId$ | async) || notSelectedItemId"
+                                [selectedItemIdByDoublClick]="
+                                    (selectedItemIdByDoubleClick$ | async) || notSelectedItemId
+                                "
                                 (delete)="onDelete(task.id)"
                                 (click)="onSelectItem(task.id)"
+                                (dblclick)="onSelectItemByDoubleClick(task.id)"
                             ></app-to-do-list-item>
                         </li>
                     }
@@ -29,16 +33,17 @@
                         ></textarea>
                     </mat-form-field>
                     <app-button
+                        type="button"
                         [tooltipText]="formLabels.addTooltip"
                         [disabled]="!newTaskText.trim()"
-                        (click)="onAdd()"
+                        (click)="onAdd($event)"
                         class="button button--add"
                     >
                         {{ formLabels.add }}
                     </app-button>
                 </div>
             </div>
-            <div class="description">{{ descriptionBySelectedItem }}</div>
+            <div class="description">{{ (selectedTask$ | async)?.description || '' }}</div>
         </div>
     }
 </div>

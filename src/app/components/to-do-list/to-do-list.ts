@@ -20,19 +20,34 @@ import { Button } from '../button';
 })
 export class ToDoList implements OnInit {
     protected tasks: ITask[] = [
-        { id: 1, text: 'Изучить JavaScript' },
-        { id: 2, text: 'Изучить React' },
-        { id: 3, text: 'Изучить Angular' },
-        { id: 4, text: 'Работать фронтенд-разработчиком' },
+        {
+            id: 1,
+            text: 'Изучить JavaScript',
+            description: 'Изучить основы языка программирования JavaScript: переменные, циклы, функции, ООП',
+        },
+        {
+            id: 2,
+            text: 'Изучить React',
+            description: 'Изучить основы работы с библиотекой React: компоненты, хуки, роутер, работа с состоянием',
+        },
+        {
+            id: 3,
+            text: 'Изучить Angular',
+            description: 'Изучить основы работы с фреймворком Angular: компоненты, директивы, сигналы, RxJS',
+        },
     ];
     protected isLoading: WritableSignal<boolean> = signal<boolean>(true);
     protected newTaskText: string = '';
+    protected newTaskDescription: string = '';
+    protected selectedItemId?: number;
     protected commonLabels: typeof COMMON_LABELS = COMMON_LABELS;
     protected formLabels: typeof FORM_LABELS = FORM_LABELS;
 
     constructor(private destroyRef: DestroyRef) {}
 
     public ngOnInit(): void {
+        this.setInitialSelectedItem();
+
         timer(500)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(() => {
@@ -45,6 +60,7 @@ export class ToDoList implements OnInit {
             const newTask: ITask = {
                 id: this.nextId,
                 text: this.newTaskText.trim(),
+                description: this.newTaskDescription.trim(),
             };
 
             this.tasks.push(newTask);
@@ -56,6 +72,16 @@ export class ToDoList implements OnInit {
         this.tasks = this.tasks.filter((task) => task.id !== taskId);
     }
 
+    protected onSelectItem(id: number) {
+        this.selectedItemId = id;
+    }
+
+    protected get descriptionBySelectedItem(): string {
+        const selectedItem = this.tasks.find((task) => task.id === this.selectedItemId);
+
+        return selectedItem?.description || '';
+    }
+
     private get nextId(): number {
         if (this.tasks.length === 0) {
             return 1;
@@ -63,5 +89,9 @@ export class ToDoList implements OnInit {
         const maxId = Math.max(...this.tasks.map((task) => task.id));
 
         return maxId + 1;
+    }
+
+    private setInitialSelectedItem(): void {
+        this.selectedItemId = this.tasks.length > 0 ? Math.min(...this.tasks.map((task) => task.id)) : undefined;
     }
 }

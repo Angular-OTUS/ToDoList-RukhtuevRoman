@@ -1,0 +1,132 @@
+.toasts-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 350px;
+}
+
+.toast {
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-left: 4px solid;
+    cursor: pointer;
+    transition:
+        transform 0.3s ease,
+        opacity 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.toast:hover {
+    transform: translateX(-4px);
+}
+
+.toast--success {
+    border-left-color: #4caf50;
+    background: #f1f8e9;
+}
+
+.toast--error {
+    border-left-color: #f44336;
+    background: #ffebee;
+}
+
+.toast--warning {
+    border-left-color: #ff9800;
+    background: #fff3e0;
+}
+
+.toast--info {
+    border-left-color: #2196f3;
+    background: #e3f2fd;
+}
+
+.toast-content {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.toast-message {
+    flex: 1;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #333;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.toast-close:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: currentColor;
+    opacity: 0.6;
+    animation: progress linear;
+}
+
+@keyframes progress {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+.toast {
+    animation: slideIn 0.3s ease;
+}
+
+.toast.leaving {
+    animation: slideOut 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}

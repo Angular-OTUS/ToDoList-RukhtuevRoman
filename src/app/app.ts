@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { ToDoList } from './components';
+import { Toasts, ToDoList } from './components';
 
 @Component({
     selector: 'app-root',
     standalone: true,
-    imports: [ToDoList],
+    imports: [ToDoList, Toasts],
     templateUrl: './app.html',
     styleUrl: './app.scss',
 })

@@ -5,8 +5,15 @@
     } @else {
         <div class="task-list-wrapper">
             <div class="task-list-container">
+                <mat-form-field class="task-status-select">
+                    <mat-select [(value)]="selectedByStatus">
+                        <mat-option [value]="EStatus.All">Все</mat-option>
+                        <mat-option [value]="EStatus.Completed">Завершенные</mat-option>
+                        <mat-option [value]="EStatus.InProgress">Действующие</mat-option>
+                    </mat-select>
+                </mat-form-field>
                 <ul class="task-list">
-                    @for (task of tasks$ | async; track task.id) {
+                    @for (task of tasks$ | async | filterTasks: selectedByStatus; track task.id) {
                         <li>
                             <app-to-do-list-item
                                 [task]="task"
@@ -21,27 +28,7 @@
                         </li>
                     }
                 </ul>
-                <div class="add-task-container">
-                    <mat-form-field class="add-task-form-field">
-                        <input matInput [(ngModel)]="newTaskText" [placeholder]="formLabels.addPlaceholder" />
-                    </mat-form-field>
-                    <mat-form-field class="add-task-description-form-field">
-                        <textarea
-                            matInput
-                            [(ngModel)]="newTaskDescription"
-                            [placeholder]="formLabels.addDescriptionPlaceholder"
-                        ></textarea>
-                    </mat-form-field>
-                    <app-button
-                        type="button"
-                        [tooltipText]="formLabels.addTooltip"
-                        [disabled]="!newTaskText.trim()"
-                        (click)="onAdd($event)"
-                        class="button button--add"
-                    >
-                        {{ formLabels.add }}
-                    </app-button>
-                </div>
+                <app-to-do-create-item></app-to-do-create-item>
             </div>
             <div class="description">{{ (selectedTask$ | async)?.description || '' }}</div>
         </div>

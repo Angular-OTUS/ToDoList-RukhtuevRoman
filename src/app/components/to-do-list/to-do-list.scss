@@ -26,14 +26,6 @@
     margin: 0 0 60px 0;
 }
 
-.add-task-form-field {
-    width: 100%;
-}
-
-.add-task-description-form-field {
-    width: 100%;
-}
-
 .task-input {
     flex: 1;
     padding: 10px 16px;
@@ -59,4 +51,8 @@
     border-radius: 8px;
     background: #f8f9fa;
     transition: all 0.2s ease;
+}
+
+.task-status-select {
+    width: 100%;
 }

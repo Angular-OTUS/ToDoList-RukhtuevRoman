@@ -22,10 +22,16 @@
 npm install
 ```
 
-Запуск проекта
+Запуск frontend
 
 ```bash
-ng serve
+npm run start
+```
+
+Запуск json-server
+
+```bash
+npm run start:api
 ```
 
 Проект в браузере

@@ -9,4 +9,7 @@ export const FORM_LABELS = {
     addSuccess: 'Задача добавлена успешно!',
     deleteSuccess: 'Задача удалена успешно!',
     updateSuccess: 'Задача обновлена успешно!',
+    changeStatusSuccess: 'Статус задачи изменен!',
+    titleRequired: 'Название задачи обязательно',
+    minLengthTitle: 'Минимальная длина: 3 символа',
 };

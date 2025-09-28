@@ -1,0 +1,29 @@
+<form [formGroup]="taskForm" (ngSubmit)="onAdd()">
+    <mat-form-field class="add-task-form-field">
+        <input matInput formControlName="text" [placeholder]="formLabels.addPlaceholder" />
+        @if (taskForm.get('text')?.invalid && (taskForm.get('text')?.touched || taskForm.get('text')?.dirty)) {
+            <mat-error>
+                @if (taskForm.get('text')?.errors?.['required']) {
+                    {{ formLabels.titleRequired }}
+                } @else if (taskForm.get('text')?.errors?.['minlength']) {
+                    {{ formLabels.minLengthTitle }}
+                }
+            </mat-error>
+        }
+    </mat-form-field>
+    <mat-form-field class="add-task-description-form-field">
+        <textarea
+            matInput
+            formControlName="description"
+            [placeholder]="formLabels.addDescriptionPlaceholder"
+        ></textarea>
+    </mat-form-field>
+    <app-button
+        type="submit"
+        [tooltipText]="formLabels.addTooltip"
+        [disabled]="taskForm.invalid"
+        class="button button--add"
+    >
+        {{ formLabels.add }}
+    </app-button>
+</form>

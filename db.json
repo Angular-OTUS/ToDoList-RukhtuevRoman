@@ -1,0 +1,22 @@
+{
+  "tasks": [
+    {
+      "id": "1",
+      "text": "Изучить JavaScript",
+      "description": "Изучить основы языка программирования JavaScript: переменные, циклы, функции, ООП",
+      "status": "Completed"
+    },
+    {
+      "id": "2",
+      "text": "Изучить React",
+      "description": "Изучить основы работы с библиотекой React: компоненты, хуки, роутер, работа с состоянием",
+      "status": "Completed"
+    },
+    {
+      "id": "3",
+      "text": "Изучить Angular",
+      "description": "Изучить основы фреймворка: интерполяция, компоненты, сервисы, Dependency Injection, RxJS",
+      "status": "InProgress"
+    }
+  ]
+}

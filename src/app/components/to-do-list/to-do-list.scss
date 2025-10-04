@@ -4,11 +4,26 @@
 }
 
 .task-list-wrapper {
-    display: grid;
+    display: flex;
     justify-content: center;
-    grid-template-columns: 500px 300px;
     gap: 10px;
     margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.task-list-container {
+    flex: 0 0 500px;
+}
+
+.task-description {
+    flex: 0 0 300px;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #f8f9fa;
+    transition: all 0.2s ease;
     box-sizing: border-box;
 }
 
@@ -40,17 +55,6 @@
 .task-input:focus {
     border-color: #007bff;
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-}
-
-.description {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 16px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background: #f8f9fa;
-    transition: all 0.2s ease;
 }
 
 .task-status-select {

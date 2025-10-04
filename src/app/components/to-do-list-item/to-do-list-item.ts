@@ -21,11 +21,11 @@ export class ToDoListItem {
     @Input({ required: true })
     public task!: ITask;
     @Input()
-    public selectedItemId: number = NOT_SELECTED_ITEM_ID;
+    public selectedItemId: string = NOT_SELECTED_ITEM_ID;
     @Input()
-    public selectedItemIdByDoublClick: number = NOT_SELECTED_ITEM_ID;
+    public selectedItemIdByDoublClick: string = NOT_SELECTED_ITEM_ID;
     @Output()
-    protected readonly delete = new EventEmitter<number>();
+    protected readonly delete = new EventEmitter<string>();
 
     protected readonly formLabels = FORM_LABELS;
 

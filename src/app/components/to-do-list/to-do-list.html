@@ -22,7 +22,7 @@
                                     (selectedItemIdByDoubleClick$ | async) || notSelectedItemId
                                 "
                                 (delete)="onDelete(task.id)"
-                                (click)="onSelectItem(task.id)"
+                                (click)="onNavigateToTask(task.id)"
                                 (dblclick)="onSelectItemByDoubleClick(task.id)"
                             ></app-to-do-list-item>
                         </li>
@@ -30,7 +30,9 @@
                 </ul>
                 <app-to-do-create-item></app-to-do-create-item>
             </div>
-            <div class="description">{{ (selectedTask$ | async)?.description || '' }}</div>
+            <div class="task-description">
+                <router-outlet></router-outlet>
+            </div>
         </div>
     }
 </div>

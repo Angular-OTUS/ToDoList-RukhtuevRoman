@@ -1,7 +1,7 @@
 import { EStatus } from '../enums';
 
 export interface ITask {
-    id: number;
+    id: string;
     text: string;
     description: string;
     status: EStatus;

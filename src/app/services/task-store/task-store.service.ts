@@ -1,6 +1,7 @@
 import { DestroyRef, inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, tap } from 'rxjs';
+import { v4 as uuid } from 'uuid';
 import { ITask, ITaskState } from '../../interfaces';
 import { NOT_SELECTED_ITEM_ID } from '../../constants';
 import { EStatus } from '../../enums';
@@ -24,12 +25,12 @@ export class TaskStoreService {
         distinctUntilChanged(),
     );
 
-    public selectedItemId$: Observable<number> = this.taskStateSubject.pipe(
+    public selectedItemId$: Observable<string> = this.taskStateSubject.pipe(
         map((state) => state.selectedItemId),
         distinctUntilChanged(),
     );
 
-    public selectedItemIdByDoubleClick$: Observable<number> = this.taskStateSubject.pipe(
+    public selectedItemIdByDoubleClick$: Observable<string> = this.taskStateSubject.pipe(
         map((state) => state.selectedItemIdByDoubleClick),
         distinctUntilChanged(),
     );
@@ -48,7 +49,6 @@ export class TaskStoreService {
                 takeUntilDestroyed(this.destroyRef),
                 tap((tasks) => {
                     this.setTasks(tasks);
-                    this.setSelectedItemId(this.setInitialSelectedItem(tasks));
                     this.setLoading(false);
                 }),
                 catchError((error) => {
@@ -110,7 +110,7 @@ export class TaskStoreService {
             .subscribe();
     }
 
-    public deleteTask(taskId: number): void {
+    public deleteTask(taskId: string): void {
         this.setLoading(true);
 
         this.taskApiService
@@ -141,11 +141,11 @@ export class TaskStoreService {
         this.updateState({ isLoading });
     }
 
-    public setSelectedItemId(id: number): void {
+    public setSelectedItemId(id: string): void {
         this.updateState({ selectedItemId: id });
     }
 
-    public setSelectedItemIdByDoubleClick(id: number): void {
+    public setSelectedItemIdByDoubleClick(id: string): void {
         this.updateState({ selectedItemIdByDoubleClick: id });
     }
 
@@ -161,9 +161,5 @@ export class TaskStoreService {
 
     public getCurrentTasks(): ITask[] {
         return this.taskStateSubject.value.tasks;
-    }
-
-    private setInitialSelectedItem(tasks: ITask[]): number {
-        return tasks.length > 0 ? Math.min(...tasks.map((task) => task.id)) : NOT_SELECTED_ITEM_ID;
     }
 }

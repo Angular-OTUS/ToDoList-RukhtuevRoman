@@ -1,18 +1,16 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { TaskStoreService, ToastService } from '../../services';
 import { FORM_LABELS, NOT_SELECTED_ITEM_ID } from '../../constants';
 import { ITask } from '../../interfaces';
-import { Tooltip } from '../../directives';
 import { EStatus } from '../../enums';
 import { Button } from '../button';
 
 @Component({
     selector: 'app-to-do-list-item',
     standalone: true,
-    imports: [Button, NgClass, Tooltip, FormsModule, MatCheckbox],
+    imports: [Button, NgClass, FormsModule],
     templateUrl: './to-do-list-item.html',
     styleUrl: './to-do-list-item.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,14 +18,18 @@ import { Button } from '../button';
 export class ToDoListItem {
     @Input({ required: true })
     public task!: ITask;
+
     @Input()
     public selectedItemId: string = NOT_SELECTED_ITEM_ID;
+
     @Input()
-    public selectedItemIdByDoublClick: string = NOT_SELECTED_ITEM_ID;
+    public selectedItemIdByDoubleClick: string = NOT_SELECTED_ITEM_ID;
+
     @Output()
     protected readonly delete = new EventEmitter<string>();
 
     protected readonly formLabels = FORM_LABELS;
+    protected readonly status = EStatus;
 
     constructor(
         private taskStore: TaskStoreService,
@@ -44,25 +46,60 @@ export class ToDoListItem {
     }
 
     protected get isEditableTitle(): boolean {
-        return this.task.id === this.selectedItemIdByDoublClick;
+        return this.task.id === this.selectedItemIdByDoubleClick;
     }
 
-    protected get isCompleted(): boolean {
-        return this.task.status === EStatus.Completed;
+    protected getNextStepButtonTooltip(status: EStatus): string {
+        switch (status) {
+            case EStatus.Pending:
+                return this.formLabels.makeProgressing;
+            case EStatus.InProgress:
+                return this.formLabels.makeCompleted;
+            default:
+                return '';
+        }
     }
 
-    protected onUpdateTask(event: Event) {
+    protected onUpdateTask(event: Event): void {
         event.preventDefault();
         event.stopPropagation();
 
-        this.taskStore.updateTask(this.task);
-        this.taskStore.setSelectedItemIdByDoubleClick(NOT_SELECTED_ITEM_ID);
-        this.toastService.success(this.formLabels.updateSuccess);
+        this.taskStore.updateTask(
+            this.task,
+            () => {
+                this.taskStore.setSelectedItemIdByDoubleClick(NOT_SELECTED_ITEM_ID);
+                this.toastService.success(this.formLabels.updateSuccess);
+            },
+            () => {
+                this.taskStore.setSelectedItemIdByDoubleClick(NOT_SELECTED_ITEM_ID);
+                this.toastService.error(this.formLabels.updateError);
+            },
+        );
     }
 
-    protected onChangeStatusTask(completed: boolean) {
-        const status = completed ? EStatus.Completed : EStatus.InProgress;
-        this.taskStore.updateTask({ ...this.task, status });
-        this.toastService.success(this.formLabels.changeStatusSuccess);
+    protected onChangeStatus(event: Event): void {
+        event.preventDefault();
+        event.stopPropagation();
+
+        this.taskStore.updateTask(
+            { ...this.task, status: this.getNextStatus(this.task.status) },
+            () => {
+                this.toastService.success(this.formLabels.updateSuccess);
+            },
+            () => {
+                this.toastService.error(this.formLabels.updateError);
+            },
+        );
+    }
+
+    private getNextStatus(status: EStatus): EStatus {
+        switch (status) {
+            case EStatus.Pending:
+                return EStatus.InProgress;
+            case EStatus.InProgress:
+                return EStatus.Completed;
+            default:
+                return EStatus.Pending;
+        }
     }
 }

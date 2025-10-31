@@ -3,15 +3,18 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ITask } from '../../interfaces';
 import { API_URL } from '../../constants';
+import { EStatus } from '../../enums';
 
-@Injectable({
-    providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class TaskApiService {
     constructor(private http: HttpClient) {}
 
     getTasks(): Observable<ITask[]> {
         return this.http.get<ITask[]>(API_URL);
+    }
+
+    getTasksByStatus(status: EStatus): Observable<ITask[]> {
+        return this.http.get<ITask[]>(`${API_URL}?status=${status}`);
     }
 
     getTaskById(id: number): Observable<ITask> {

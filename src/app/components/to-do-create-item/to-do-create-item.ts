@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -18,6 +18,9 @@ import { TTaskFormControls } from './types';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToDoCreateItem {
+    @Output()
+    public formSent = new EventEmitter<void>();
+
     private fb = inject(FormBuilder);
     protected taskForm: FormGroup<TTaskFormControls>;
     protected readonly formLabels = FORM_LABELS;
@@ -39,10 +42,23 @@ export class ToDoCreateItem {
         if (this.taskForm.valid) {
             const formValue = this.taskForm.value as ITaskForm;
 
-            this.taskStore.addTask(formValue.text.trim(), formValue.description.trim(), EStatus.InProgress);
+            const task = {
+                text: formValue.text.trim(),
+                description: formValue.description.trim(),
+                status: EStatus.Pending,
+            };
 
+            this.taskStore.addTask(
+                task,
+                () => {
+                    this.toastService.success(this.formLabels.addSuccess);
+                },
+                () => {
+                    this.toastService.success(this.formLabels.addError);
+                },
+            );
             this.taskForm.reset();
-            this.toastService.success(this.formLabels.addSuccess);
+            this.formSent.emit();
         }
     }
 }

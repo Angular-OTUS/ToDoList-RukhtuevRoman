@@ -2,25 +2,22 @@
 
 .button {
     @include button.button-base;
+    border-radius: 4px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
 
-    &--add {
+    &__success {
         @include button.button-variant(#02a325);
-        border-radius: 6px;
-        padding: 10px 20px;
     }
 
-    &--delete {
+    &__danger {
         @include button.button-variant(#dc3545);
-        border-radius: 4px;
-        padding: 6px 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
     }
 
-    &--save {
+    &__primary {
         @include button.button-variant(#3583dc);
-        border-radius: 4px;
-        padding: 6px 12px;
     }
 }

@@ -1,0 +1,8 @@
+.to-do-board {
+    display: flex;
+    gap: 20px;
+
+    &__group {
+        flex-basis: 400px;
+    }
+}

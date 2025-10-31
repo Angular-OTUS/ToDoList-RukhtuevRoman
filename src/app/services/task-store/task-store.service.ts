@@ -1,12 +1,12 @@
 import { DestroyRef, inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, tap } from 'rxjs';
-import { v4 as uuid } from 'uuid';
+import { BehaviorSubject, combineLatest, delay, distinctUntilChanged, map, Observable, tap } from 'rxjs';
+import { isEqual } from 'lodash';
 import { ITask, ITaskState } from '../../interfaces';
 import { NOT_SELECTED_ITEM_ID } from '../../constants';
 import { EStatus } from '../../enums';
 import { TaskApiService } from '../task-api';
-import { DEFAULT_TASK_STATE } from './constants';
+import { DEFAULT_TASK_STATE, DELAY_TIME } from './constants';
 
 @Injectable({ providedIn: 'root' })
 export class TaskStoreService {
@@ -15,9 +15,9 @@ export class TaskStoreService {
 
     private taskStateSubject = new BehaviorSubject<ITaskState>(DEFAULT_TASK_STATE);
 
-    public tasks$: Observable<ITask[]> = this.taskStateSubject.pipe(
-        map((state) => state.tasks),
-        distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
+    public tasksByStatus$: Observable<Record<EStatus, ITask[]>> = this.taskStateSubject.pipe(
+        map((state) => state.tasksByStatus),
+        distinctUntilChanged(isEqual),
     );
 
     public isLoading$: Observable<boolean> = this.taskStateSubject.pipe(
@@ -35,106 +35,153 @@ export class TaskStoreService {
         distinctUntilChanged(),
     );
 
-    public selectedTask$: Observable<ITask | undefined> = combineLatest([this.tasks$, this.selectedItemId$]).pipe(
-        map(([tasks, selectedId]) => tasks.find((task) => task.id === selectedId)),
+    public selectedTask$: Observable<ITask | undefined> = combineLatest([
+        this.tasksByStatus$,
+        this.selectedItemId$,
+    ]).pipe(
+        map(([tasksByStatus, selectedId]) => tasksByStatus[EStatus.Pending].find((task) => task.id === selectedId)),
         distinctUntilChanged(),
     );
 
-    public loadTasks(): void {
+    public loadTasksByStatus(status: EStatus): void {
         this.setLoading(true);
 
         this.taskApiService
-            .getTasks()
+            .getTasksByStatus(status)
             .pipe(
                 takeUntilDestroyed(this.destroyRef),
-                tap((tasks) => {
-                    this.setTasks(tasks);
-                    this.setLoading(false);
-                }),
-                catchError((error) => {
-                    console.error('Error loading tasks:', error);
-                    this.setLoading(false);
-                    return [];
+                delay(DELAY_TIME),
+                tap({
+                    next: (tasks: ITask[]): void => {
+                        this.updateState({
+                            tasksByStatus: this.setTasksByStatus(status, tasks),
+                            isLoading: false,
+                        });
+                    },
+                    error: (): void => {
+                        this.updateState({
+                            tasksByStatus: this.setTasksByStatus(status),
+                            isLoading: false,
+                        });
+                    },
                 }),
             )
             .subscribe();
     }
 
-    public addTask(text: string, description: string, status: EStatus): void {
-        this.setLoading(true);
-
-        const newTaskData = {
-            text: text.trim(),
-            description: description.trim(),
-            status,
-        };
-
-        this.taskApiService
-            .createTask(newTaskData)
-            .pipe(
-                takeUntilDestroyed(this.destroyRef),
-                tap((newTask) => {
-                    this.updateState((state) => ({
-                        tasks: [...state.tasks, newTask],
-                    }));
-                    this.setLoading(false);
-                }),
-                catchError((error) => {
-                    console.error('Error adding task:', error);
-                    this.setLoading(false);
-                    return [];
-                }),
-            )
-            .subscribe();
-    }
-
-    public updateTask(updatedTask: ITask): void {
+    public updateTask(updatedTask: ITask, nextSuccess?: () => void, nextError?: () => void): void {
         this.setLoading(true);
 
         this.taskApiService
             .updateTask(updatedTask)
             .pipe(
                 takeUntilDestroyed(this.destroyRef),
-                tap((updatedTask) => {
-                    this.updateState((state) => ({
-                        tasks: state.tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task)),
-                    }));
-                    this.setLoading(false);
-                }),
-                catchError((error) => {
-                    console.error('Error updating task:', error);
-                    this.setLoading(false);
-                    return [];
+                delay(DELAY_TIME),
+                tap({
+                    next: (updatedTask: ITask) => {
+                        const state = this.taskStateSubject.value;
+                        const tasksByStatus = { ...state.tasksByStatus };
+                        const status = updatedTask.status;
+
+                        const tasksByCurrentStatus = [...state.tasksByStatus[status]];
+                        const taskIndex = tasksByCurrentStatus.findIndex((task) => task.id === updatedTask.id);
+                        if (taskIndex === -1) {
+                            tasksByCurrentStatus.push(updatedTask);
+                        } else {
+                            tasksByCurrentStatus[taskIndex] = updatedTask;
+                        }
+
+                        Object.entries(tasksByStatus).forEach(([key, tasks]) => {
+                            if (key !== status) {
+                                tasksByStatus[key as keyof typeof tasksByStatus] = tasks.filter(
+                                    (task) => task.id !== updatedTask.id,
+                                );
+                            }
+                        });
+                        this.updateState({
+                            // tasks: state.tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task)),
+                            tasksByStatus: { ...tasksByStatus, [status]: tasksByCurrentStatus },
+                            isLoading: false,
+                        });
+                        nextSuccess?.();
+                    },
+                    error: (error) => {
+                        this.updateState({
+                            isLoading: false,
+                        });
+                        nextError?.();
+                    },
                 }),
             )
             .subscribe();
     }
 
-    public deleteTask(taskId: string): void {
+    public addTask(task: Omit<ITask, 'id'>, nextSuccess?: () => void, nextError?: () => void): void {
         this.setLoading(true);
 
         this.taskApiService
-            .deleteTask(taskId)
+            .createTask(task)
             .pipe(
                 takeUntilDestroyed(this.destroyRef),
-                tap(() => {
-                    this.updateState((state) => ({
-                        tasks: state.tasks.filter((task) => task.id !== taskId),
-                        selectedItemId: state.selectedItemId === taskId ? NOT_SELECTED_ITEM_ID : state.selectedItemId,
-                    }));
-                    this.setLoading(false);
-                }),
-                catchError((error) => {
-                    console.error('Error deleting task:', error);
-                    this.setLoading(false);
-                    return [];
+                delay(DELAY_TIME),
+                tap({
+                    next: (task: ITask): void => {
+                        const tasksByStatus = this.taskStateSubject.value.tasksByStatus;
+                        this.updateState({
+                            tasksByStatus: { ...tasksByStatus, [task.status]: [...tasksByStatus[task.status], task] },
+                            isLoading: false,
+                        });
+                        nextSuccess?.();
+                    },
+                    error: (): void => {
+                        this.updateState({
+                            isLoading: false,
+                        });
+                        nextError?.();
+                    },
                 }),
             )
             .subscribe();
     }
 
-    public setTasks(tasks: ITask[]): void {
-        this.updateState({ tasks });
+    public deleteTask(task: ITask, nextSuccess?: () => void, nextError?: () => void): void {
+        this.setLoading(true);
+
+        this.taskApiService
+            .deleteTask(task.id)
+            .pipe(
+                takeUntilDestroyed(this.destroyRef),
+                delay(DELAY_TIME),
+                tap({
+                    next: (): void => {
+                        const selectedItemId = this.taskStateSubject.value.selectedItemId;
+                        const tasksByStatus = this.taskStateSubject.value.tasksByStatus;
+                        this.updateState({
+                            tasksByStatus: {
+                                ...tasksByStatus,
+                                [task.status]: tasksByStatus[task.status].filter(
+                                    (filteredTask) => filteredTask.id !== task.id,
+                                ),
+                            },
+                            selectedItemId: selectedItemId === task.id ? NOT_SELECTED_ITEM_ID : selectedItemId,
+                            isLoading: false,
+                        });
+                        nextSuccess?.();
+                    },
+                    error: (): void => {
+                        this.updateState({
+                            isLoading: false,
+                        });
+                        nextError?.();
+                    },
+                }),
+            )
+            .subscribe();
+    }
+
+    private setTasksByStatus(status: EStatus, tasks?: ITask[]): ITaskState['tasksByStatus'] {
+        const previousState = this.taskStateSubject.value;
+        return { ...previousState.tasksByStatus, [status]: tasks || [] };
     }
 
     public setLoading(isLoading: boolean): void {
@@ -157,9 +204,5 @@ export class TaskStoreService {
                 : { ...currentState, ...updater };
 
         this.taskStateSubject.next(newState);
-    }
-
-    public getCurrentTasks(): ITask[] {
-        return this.taskStateSubject.value.tasks;
     }
 }

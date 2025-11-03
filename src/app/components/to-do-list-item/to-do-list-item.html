@@ -2,7 +2,7 @@
     <div class="task-item" [ngClass]="{ 'task-item__selected': isSelected }">
         @if (isEditableTitle) {
             <div class="task-item__editable">
-                <input [(ngModel)]="task.text" class="task-item__input" />
+                <input [(ngModel)]="task().text" class="task-item__input" />
                 <app-button
                     [tooltipText]="formLabels.addTooltip"
                     class="button button__primary"
@@ -12,14 +12,14 @@
                 </app-button>
             </div>
         } @else {
-            <div class="task-item__text">{{ task.text }}</div>
+            <div class="task-item__text">{{ task().text }}</div>
         }
         <div class="task-item__buttons">
-            @if (task.status !== status.Completed) {
+            @if (task().status !== status.Completed) {
                 <app-button
                     type="button"
                     class="button button__success task-item__button"
-                    [tooltipText]="getNextStepButtonTooltip(task.status)"
+                    [tooltipText]="getNextStepButtonTooltip(task().status)"
                     (click)="onChangeStatus($event)"
                 >
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

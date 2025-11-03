@@ -17,13 +17,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 export class Navigation {
     private destroyRef = inject(DestroyRef);
     protected navItems: INavItem[] = NAV_ITEMS;
-    private currentRoute: string = '';
+    private currentRoute = '';
 
     constructor(private router: Router) {
         this.router.events
             .pipe(
-                takeUntilDestroyed(this.destroyRef),
                 filter((event) => event instanceof NavigationEnd),
+                takeUntilDestroyed(this.destroyRef),
             )
             .subscribe((event: NavigationEnd) => {
                 this.currentRoute = event.urlAfterRedirects;

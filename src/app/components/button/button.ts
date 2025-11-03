@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { Tooltip } from '../../directives';
 
 @Component({
@@ -10,17 +10,11 @@ import { Tooltip } from '../../directives';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Button {
-    @Input()
-    public title: string = '';
-    @Input()
-    public class: string = 'button';
-    @Input()
-    public disabled: boolean = false;
-    @Input()
-    public tooltipText: string = '';
+    public class = input('button');
+    public disabled = input(false);
+    public tooltipText = input('');
 
-    @Output()
-    protected readonly click = new EventEmitter<MouseEvent>();
+    protected readonly click = output<MouseEvent>();
 
     protected onClick(event: MouseEvent) {
         this.click.emit(event);

@@ -1,14 +1,14 @@
-@if (title) {
-    <span class="to-do-group__title">{{ title }} ({{ tasks.length }})</span>
+@if (title()) {
+    <span class="to-do-group__title">{{ title() }} ({{ tasks().length }})</span>
 }
-@if (tasks.length > 0) {
+@if (tasks().length > 0) {
     <ul class="to-do-group__list">
-        @for (task of tasks; track task.id) {
+        @for (task of tasks(); track task.id) {
             <li class="to-do-group__list-item">
                 <app-to-do-list-item
                     [task]="task"
-                    [selectedItemId]="selectedItemId"
-                    [selectedItemIdByDoubleClick]="selectedItemIdByDoubleClick"
+                    [selectedItemId]="selectedItemId()"
+                    [selectedItemIdByDoubleClick]="selectedItemIdByDoubleClick()"
                     (delete)="onDelete(task)"
                     (click)="onSelectItemByClick(task.id)"
                     (dblclick)="onSelectItemByDoubleClick(task.id)"

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TaskStoreService, ToastService } from '../../services';
@@ -16,17 +16,11 @@ import { Button } from '../button';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToDoListItem {
-    @Input({ required: true })
-    public task!: ITask;
+    public task = input.required<ITask>();
+    public selectedItemId = input(NOT_SELECTED_ITEM_ID);
+    public selectedItemIdByDoubleClick = input(NOT_SELECTED_ITEM_ID);
 
-    @Input()
-    public selectedItemId: string = NOT_SELECTED_ITEM_ID;
-
-    @Input()
-    public selectedItemIdByDoubleClick: string = NOT_SELECTED_ITEM_ID;
-
-    @Output()
-    protected readonly delete = new EventEmitter<string>();
+    protected readonly delete = output<string>();
 
     protected readonly formLabels = FORM_LABELS;
     protected readonly status = EStatus;
@@ -38,15 +32,15 @@ export class ToDoListItem {
 
     protected onDelete(event: MouseEvent): void {
         event.stopPropagation();
-        this.delete.emit(this.task.id);
+        this.delete.emit(this.task().id);
     }
 
     protected get isSelected(): boolean {
-        return this.task.id === this.selectedItemId;
+        return this.task().id === this.selectedItemId();
     }
 
     protected get isEditableTitle(): boolean {
-        return this.task.id === this.selectedItemIdByDoubleClick;
+        return this.task().id === this.selectedItemIdByDoubleClick();
     }
 
     protected getNextStepButtonTooltip(status: EStatus): string {
@@ -65,7 +59,7 @@ export class ToDoListItem {
         event.stopPropagation();
 
         this.taskStore.updateTask(
-            this.task,
+            this.task(),
             () => {
                 this.taskStore.setSelectedItemIdByDoubleClick(NOT_SELECTED_ITEM_ID);
                 this.toastService.success(this.formLabels.updateSuccess);
@@ -82,7 +76,7 @@ export class ToDoListItem {
         event.stopPropagation();
 
         this.taskStore.updateTask(
-            { ...this.task, status: this.getNextStatus(this.task.status) },
+            { ...this.task(), status: this.getNextStatus(this.task().status) },
             () => {
                 this.toastService.success(this.formLabels.updateSuccess);
             },

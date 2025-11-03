@@ -23,7 +23,7 @@ export class ToDoBoard implements OnInit {
     protected selectedItemIdByDoubleClick$: Observable<string>;
     protected readonly statusLabels = STATUS_LABELS;
     protected readonly status = EStatus;
-    protected readonly notSelectedItemId: string = NOT_SELECTED_ITEM_ID;
+    protected readonly notSelectedItemId = NOT_SELECTED_ITEM_ID;
 
     constructor(
         private router: Router,

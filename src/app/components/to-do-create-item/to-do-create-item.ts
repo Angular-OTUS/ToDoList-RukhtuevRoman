@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -18,8 +18,7 @@ import { TTaskFormControls } from './types';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToDoCreateItem {
-    @Output()
-    public formSent = new EventEmitter<void>();
+    public formSent = output<void>();
 
     private fb = inject(FormBuilder);
     protected taskForm: FormGroup<TTaskFormControls>;
@@ -54,7 +53,7 @@ export class ToDoCreateItem {
                     this.toastService.success(this.formLabels.addSuccess);
                 },
                 () => {
-                    this.toastService.success(this.formLabels.addError);
+                    this.toastService.error(this.formLabels.addError);
                 },
             );
             this.taskForm.reset();

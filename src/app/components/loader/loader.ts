@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { TLoaderColor } from './types';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TLoaderColor } from './types';
 
 @Component({
     selector: 'app-loader',
@@ -11,10 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Loader {
-    @Input()
-    public isLoading: boolean = false;
-    @Input()
-    public diameter: number = 50;
-    @Input()
-    public color: TLoaderColor = 'primary';
+    public isLoading = input(false);
+    public diameter = input(50);
+    public color = input<TLoaderColor>('primary');
 }

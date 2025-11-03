@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
 @Component({
     selector: 'app-modal',
@@ -9,17 +9,10 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Modal {
-    @Input()
-    public isVisible: boolean = false;
+    public isVisible = input(false);
+    public title = input('');
 
-    @Input()
-    public title: string = '';
-
-    @Output()
-    public confirmed = new EventEmitter<void>();
-
-    @Output()
-    public closed = new EventEmitter<void>();
+    public closed = output<void>();
 
     protected onClose(): void {
         this.closed.emit();

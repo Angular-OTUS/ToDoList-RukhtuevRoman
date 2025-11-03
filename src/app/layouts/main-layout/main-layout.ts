@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbar } from '@angular/material/toolbar';
 import { COMMON_LABELS } from '../../constants';
@@ -13,8 +13,7 @@ import { Navigation } from '../../components';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MainLayout {
-    @Input()
-    title: string = '';
+    title = input('');
 
     protected commonLabels = COMMON_LABELS;
 }

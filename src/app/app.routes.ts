@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { Backlog, Board } from './pages';
 
 export const routes: Routes = [
     {
@@ -9,11 +8,11 @@ export const routes: Routes = [
     },
     {
         path: 'board',
-        component: Board,
+        loadComponent: () => import('./pages/board').then((m) => m.Board),
     },
     {
         path: 'backlog',
-        component: Backlog,
+        loadComponent: () => import('./pages/backlog').then((m) => m.Backlog),
     },
     {
         path: '**',

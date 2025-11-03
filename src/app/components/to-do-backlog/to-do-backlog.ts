@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -20,7 +20,7 @@ import { Button } from '../button';
     styleUrl: './to-do-backlog.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ToDoBacklog implements OnInit, AfterViewInit {
+export class ToDoBacklog implements OnInit {
     protected isLoading$: Observable<boolean>;
     protected tasksByStatus$: Observable<Record<EStatus, ITask[]>>;
     protected selectedItemId$: Observable<string>;
@@ -28,11 +28,8 @@ export class ToDoBacklog implements OnInit, AfterViewInit {
     protected selectedItemIdByDoubleClick$: Observable<string>;
     protected readonly formLabels = FORM_LABELS;
     protected readonly status = EStatus;
-    protected readonly notSelectedItemId: string = NOT_SELECTED_ITEM_ID;
-    protected showNewTaskModal: boolean = false;
-
-    @ViewChild(ToDoCreateItem)
-    protected createItemComponent!: ToDoCreateItem;
+    protected readonly notSelectedItemId = NOT_SELECTED_ITEM_ID;
+    protected showNewTaskModal = false;
 
     constructor(
         private router: Router,
@@ -47,14 +44,6 @@ export class ToDoBacklog implements OnInit, AfterViewInit {
 
     public ngOnInit(): void {
         this.initializeTasks();
-    }
-
-    public ngAfterViewInit(): void {
-        if (this.createItemComponent) {
-            this.createItemComponent.formSent.subscribe(() => {
-                this.onCloseNewTaskModal();
-            });
-        }
     }
 
     protected onShowNewTaskModal(): void {

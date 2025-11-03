@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { Router } from '@angular/router';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TaskStoreService, ToastService } from '../../services';
 import { FORM_LABELS, NOT_SELECTED_ITEM_ID } from '../../constants';
 import { ITask } from '../../interfaces';
@@ -14,24 +13,16 @@ import { ToDoListItem } from '../to-do-list-item';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToDoGroup {
-    @Input()
-    public title: string = '';
-
-    @Input()
-    public tasks: ITask[] = [];
-
-    @Input()
-    public selectedItemId: string = NOT_SELECTED_ITEM_ID;
-
-    @Input()
-    public selectedItemIdByDoubleClick: string = NOT_SELECTED_ITEM_ID;
+    public title = input('');
+    public tasks = input<ITask[]>([]);
+    public selectedItemId = input(NOT_SELECTED_ITEM_ID);
+    public selectedItemIdByDoubleClick = input(NOT_SELECTED_ITEM_ID);
 
     protected formLabels = FORM_LABELS;
 
     constructor(
         private taskStore: TaskStoreService,
         private toastService: ToastService,
-        private router: Router,
     ) {}
 
     protected onDelete(task: ITask): void {

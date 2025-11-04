@@ -1,28 +1,30 @@
-@if (isLoading$ | async; as isLoading) {
-    <app-loader [isLoading]="isLoading"></app-loader>
-} @else {
-    <div class="to-do-backlog">
-        <div class="to-do-backlog__group">
-            <app-button type="button" class="button button__primary" (click)="onShowNewTaskModal()">
-                {{ formLabels.addTooltip }}
-            </app-button>
-            @if (tasksByStatus$ | async; as tasksByStatus) {
-                @if (tasksByStatus[status.Pending].length > 0) {
-                    <app-to-do-group
-                        [tasks]="tasksByStatus[status.Pending]"
-                        [selectedItemId]="(selectedItemId$ | async) || notSelectedItemId"
-                        [selectedItemIdByDoubleClick]="(selectedItemIdByDoubleClick$ | async) || notSelectedItemId"
-                    ></app-to-do-group>
-                } @else {
-                    <span>{{ formLabels.noTasks }}</span>
+@if (viewModel$ | async; as vm) {
+    @if (vm.isLoading) {
+        <app-loader [isLoading]="vm.isLoading"></app-loader>
+    } @else {
+        <div class="to-do-backlog">
+            <div class="to-do-backlog__group">
+                <app-button type="button" class="button button__primary" (click)="onShowNewTaskModal()">
+                    {{ formLabels.addTooltip }}
+                </app-button>
+                @if (vm.tasksByStatus) {
+                    @if (vm.tasksByStatus[status.Pending].length > 0) {
+                        <app-to-do-group
+                            [tasks]="vm.tasksByStatus[status.Pending]"
+                            [selectedItemId]="vm.selectedItemId"
+                            [selectedItemIdByDoubleClick]="vm.selectedItemIdByDoubleClick"
+                        ></app-to-do-group>
+                    } @else {
+                        <span>{{ formLabels.noTasks }}</span>
+                    }
                 }
-            }
+            </div>
+            <div class="to-do-backlog__description">
+                {{ vm.selectedTask?.description || '' }}
+            </div>
         </div>
-        <div class="to-do-backlog__description">
-            {{ (selectedTask$ | async)?.description || '' }}
-        </div>
-    </div>
-    <app-modal [title]="formLabels.newTaskFormTitle" [isVisible]="showNewTaskModal" (closed)="onCloseNewTaskModal()"
-        ><app-to-do-create-item (formSent)="onCloseNewTaskModal()"></app-to-do-create-item
-    ></app-modal>
+        <app-modal [title]="formLabels.newTaskFormTitle" [isVisible]="showNewTaskModal" (closed)="onCloseNewTaskModal()"
+            ><app-to-do-create-item (formSent)="onCloseNewTaskModal()"></app-to-do-create-item
+        ></app-modal>
+    }
 }

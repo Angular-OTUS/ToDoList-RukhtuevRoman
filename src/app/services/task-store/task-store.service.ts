@@ -2,46 +2,54 @@ import { DestroyRef, inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, combineLatest, delay, distinctUntilChanged, map, Observable, tap } from 'rxjs';
 import { isEqual } from 'lodash';
-import { ITask, ITaskState } from '../../interfaces';
+import { ITask, ITaskState, ITaskStoreService, ITaskViewModel } from '../../interfaces';
 import { NOT_SELECTED_ITEM_ID } from '../../constants';
 import { EStatus } from '../../enums';
 import { TaskApiService } from '../task-api';
 import { DEFAULT_TASK_STATE, DELAY_TIME } from './constants';
 
 @Injectable({ providedIn: 'root' })
-export class TaskStoreService {
+export class TaskStoreService implements ITaskStoreService {
     private destroyRef = inject(DestroyRef);
     private taskApiService = inject(TaskApiService);
 
     private taskStateSubject = new BehaviorSubject<ITaskState>(DEFAULT_TASK_STATE);
 
-    public tasksByStatus$: Observable<Record<EStatus, ITask[]>> = this.taskStateSubject.pipe(
+    private tasksByStatus$: Observable<Record<EStatus, ITask[]>> = this.taskStateSubject.pipe(
         map((state) => state.tasksByStatus),
         distinctUntilChanged(isEqual),
     );
 
-    public isLoading$: Observable<boolean> = this.taskStateSubject.pipe(
+    private isLoading$: Observable<boolean> = this.taskStateSubject.pipe(
         map((state) => state.isLoading),
         distinctUntilChanged(),
     );
 
-    public selectedItemId$: Observable<string> = this.taskStateSubject.pipe(
+    private selectedItemId$: Observable<string> = this.taskStateSubject.pipe(
         map((state) => state.selectedItemId),
         distinctUntilChanged(),
     );
 
-    public selectedItemIdByDoubleClick$: Observable<string> = this.taskStateSubject.pipe(
+    private selectedItemIdByDoubleClick$: Observable<string> = this.taskStateSubject.pipe(
         map((state) => state.selectedItemIdByDoubleClick),
         distinctUntilChanged(),
     );
 
-    public selectedTask$: Observable<ITask | undefined> = combineLatest([
+    private selectedTask$: Observable<ITask | undefined> = combineLatest([
         this.tasksByStatus$,
         this.selectedItemId$,
     ]).pipe(
         map(([tasksByStatus, selectedId]) => tasksByStatus[EStatus.Pending].find((task) => task.id === selectedId)),
         distinctUntilChanged(),
     );
+
+    public viewModel$: Observable<ITaskViewModel> = combineLatest({
+        tasksByStatus: this.tasksByStatus$,
+        isLoading: this.isLoading$,
+        selectedItemId: this.selectedItemId$,
+        selectedItemIdByDoubleClick: this.selectedItemIdByDoubleClick$,
+        selectedTask: this.selectedTask$,
+    }).pipe(distinctUntilChanged(isEqual));
 
     public loadTasksByStatus(status: EStatus): void {
         this.setLoading(true);
@@ -63,6 +71,34 @@ export class TaskStoreService {
                             tasksByStatus: this.setTasksByStatus(status),
                             isLoading: false,
                         });
+                    },
+                }),
+            )
+            .subscribe();
+    }
+
+    public addTask(task: Omit<ITask, 'id'>, nextSuccess?: () => void, nextError?: () => void): void {
+        this.setLoading(true);
+
+        this.taskApiService
+            .createTask(task)
+            .pipe(
+                takeUntilDestroyed(this.destroyRef),
+                delay(DELAY_TIME),
+                tap({
+                    next: (task: ITask): void => {
+                        const tasksByStatus = this.taskStateSubject.value.tasksByStatus;
+                        this.updateState({
+                            tasksByStatus: { ...tasksByStatus, [task.status]: [...tasksByStatus[task.status], task] },
+                            isLoading: false,
+                        });
+                        nextSuccess?.();
+                    },
+                    error: (): void => {
+                        this.updateState({
+                            isLoading: false,
+                        });
+                        nextError?.();
                     },
                 }),
             )
@@ -99,41 +135,12 @@ export class TaskStoreService {
                             }
                         });
                         this.updateState({
-                            // tasks: state.tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task)),
                             tasksByStatus: { ...tasksByStatus, [status]: tasksByCurrentStatus },
                             isLoading: false,
                         });
                         nextSuccess?.();
                     },
-                    error: (error) => {
-                        this.updateState({
-                            isLoading: false,
-                        });
-                        nextError?.();
-                    },
-                }),
-            )
-            .subscribe();
-    }
-
-    public addTask(task: Omit<ITask, 'id'>, nextSuccess?: () => void, nextError?: () => void): void {
-        this.setLoading(true);
-
-        this.taskApiService
-            .createTask(task)
-            .pipe(
-                takeUntilDestroyed(this.destroyRef),
-                delay(DELAY_TIME),
-                tap({
-                    next: (task: ITask): void => {
-                        const tasksByStatus = this.taskStateSubject.value.tasksByStatus;
-                        this.updateState({
-                            tasksByStatus: { ...tasksByStatus, [task.status]: [...tasksByStatus[task.status], task] },
-                            isLoading: false,
-                        });
-                        nextSuccess?.();
-                    },
-                    error: (): void => {
+                    error: () => {
                         this.updateState({
                             isLoading: false,
                         });
@@ -179,21 +186,21 @@ export class TaskStoreService {
             .subscribe();
     }
 
-    private setTasksByStatus(status: EStatus, tasks?: ITask[]): ITaskState['tasksByStatus'] {
-        const previousState = this.taskStateSubject.value;
-        return { ...previousState.tasksByStatus, [status]: tasks || [] };
-    }
-
-    public setLoading(isLoading: boolean): void {
-        this.updateState({ isLoading });
-    }
-
     public setSelectedItemId(id: string): void {
         this.updateState({ selectedItemId: id });
     }
 
     public setSelectedItemIdByDoubleClick(id: string): void {
         this.updateState({ selectedItemIdByDoubleClick: id });
+    }
+
+    private setTasksByStatus(status: EStatus, tasks?: ITask[]): ITaskState['tasksByStatus'] {
+        const previousState = this.taskStateSubject.value;
+        return { ...previousState.tasksByStatus, [status]: tasks || [] };
+    }
+
+    private setLoading(isLoading: boolean): void {
+        this.updateState({ isLoading });
     }
 
     private updateState(updater: Partial<ITaskState> | ((state: ITaskState) => Partial<ITaskState>)): void {

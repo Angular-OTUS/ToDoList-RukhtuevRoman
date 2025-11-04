@@ -1,34 +1,34 @@
-@let selectedItemIdByDoubleClick = (selectedItemIdByDoubleClick$ | async) || notSelectedItemId;
-
-@if (isLoading$ | async; as isLoading) {
-    <app-loader [isLoading]="isLoading"></app-loader>
-} @else {
-    <div class="to-do-board">
-        @if (tasksByStatus$ | async; as tasksByStatus) {
-            <div class="to-do-board__group">
-                <app-to-do-group
-                    [title]="statusLabels[status.Pending]"
-                    [tasks]="tasksByStatus[status.Pending]"
-                    [selectedItemId]="notSelectedItemId"
-                    [selectedItemIdByDoubleClick]="selectedItemIdByDoubleClick"
-                ></app-to-do-group>
-            </div>
-            <div class="to-do-board__group">
-                <app-to-do-group
-                    [title]="statusLabels[status.InProgress]"
-                    [tasks]="tasksByStatus[status.InProgress]"
-                    [selectedItemId]="notSelectedItemId"
-                    [selectedItemIdByDoubleClick]="selectedItemIdByDoubleClick"
-                ></app-to-do-group>
-            </div>
-            <div class="to-do-board__group">
-                <app-to-do-group
-                    [title]="statusLabels[status.Completed]"
-                    [tasks]="tasksByStatus[status.Completed]"
-                    [selectedItemId]="notSelectedItemId"
-                    [selectedItemIdByDoubleClick]="selectedItemIdByDoubleClick"
-                ></app-to-do-group>
-            </div>
-        }
-    </div>
+@if (viewModel$ | async; as vm) {
+    @if (vm.isLoading) {
+        <app-loader [isLoading]="vm.isLoading"></app-loader>
+    } @else {
+        <div class="to-do-board">
+            @if (vm.tasksByStatus) {
+                <div class="to-do-board__group">
+                    <app-to-do-group
+                        [title]="statusLabels[status.Pending]"
+                        [tasks]="vm.tasksByStatus[status.Pending]"
+                        [selectedItemId]="notSelectedItemId"
+                        [selectedItemIdByDoubleClick]="vm.selectedItemIdByDoubleClick"
+                    ></app-to-do-group>
+                </div>
+                <div class="to-do-board__group">
+                    <app-to-do-group
+                        [title]="statusLabels[status.InProgress]"
+                        [tasks]="vm.tasksByStatus[status.InProgress]"
+                        [selectedItemId]="notSelectedItemId"
+                        [selectedItemIdByDoubleClick]="vm.selectedItemIdByDoubleClick"
+                    ></app-to-do-group>
+                </div>
+                <div class="to-do-board__group">
+                    <app-to-do-group
+                        [title]="statusLabels[status.Completed]"
+                        [tasks]="vm.tasksByStatus[status.Completed]"
+                        [selectedItemId]="notSelectedItemId"
+                        [selectedItemIdByDoubleClick]="vm.selectedItemIdByDoubleClick"
+                    ></app-to-do-group>
+                </div>
+            }
+        </div>
+    }
 }

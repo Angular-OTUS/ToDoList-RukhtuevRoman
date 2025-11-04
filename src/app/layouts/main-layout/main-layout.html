@@ -1,0 +1,14 @@
+<mat-drawer-container class="main-layout">
+    <mat-drawer class="main-layout__drawer" mode="side" opened
+        ><div class="main-layout__drawer-title">{{ commonLabels.appTitle }}</div>
+        <app-navigation></app-navigation>
+    </mat-drawer>
+    <mat-drawer-content class="main-layout__content-wrapper">
+        <mat-toolbar class="main-layout__toolbar">
+            <span>{{ title() }}</span>
+        </mat-toolbar>
+        <div class="main-layout__content">
+            <ng-content></ng-content>
+        </div>
+    </mat-drawer-content>
+</mat-drawer-container>

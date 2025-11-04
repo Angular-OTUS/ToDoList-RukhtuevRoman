@@ -1,0 +1,41 @@
+:host {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+}
+
+.main-layout {
+    display: block;
+    height: 100vh;
+
+    &__drawer {
+        display: block;
+        height: 100vh;
+        background-color: #f3f3f3;
+        border-radius: unset;
+        border-right: 1px solid #eaeaea;
+
+        &-title {
+            font-size: 24px;
+            font-weight: 500;
+            line-height: 32px;
+            font-family: Roboto, 'Helvetica Neue', sans-serif;
+            padding: 16px;
+        }
+    }
+
+    &__content-wrapper {
+        display: block;
+        height: 100vh;
+    }
+
+    &__toolbar {
+        background-color: #f3f3f3;
+        border-bottom: 1px solid #eaeaea;
+    }
+
+    &__content {
+        padding: 20px;
+        height: calc(100% - 105px);
+    }
+}

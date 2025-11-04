@@ -1,0 +1,18 @@
+@if (isVisible()) {
+    <div class="modal-overlay" (click)="onClose()">
+        <div class="modal-content" (click)="onClickModalContent($event)">
+            <div class="modal-header">
+                <h3>{{ title() }}</h3>
+                <button class="close-btn" (click)="onClose()">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 4L4 12M4 4L12 12" stroke="black" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <ng-content></ng-content>
+            </div>
+        </div>
+    </div>
+}

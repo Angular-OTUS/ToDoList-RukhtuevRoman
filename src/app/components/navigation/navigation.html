@@ -1,0 +1,7 @@
+<mat-nav-list>
+    @for (link of navItems; track link.route) {
+        <a mat-list-item [routerLink]="link.route" [activated]="isActive(link.route)">
+            <span matListItemTitle>{{ link.label }}</span>
+        </a>
+    }
+</mat-nav-list>

@@ -9,7 +9,6 @@ import { EStatus } from '../enums';
 export class FilterTasksPipe implements PipeTransform {
     transform(tasks: ITask[] | null, status: EStatus): ITask[] {
         if (!tasks) return [];
-        if (status === EStatus.All) return tasks;
         return tasks.filter((task) => task.status === status);
     }
 }

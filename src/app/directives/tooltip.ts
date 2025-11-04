@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, HostListener, input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { TTooltipPosition } from './types';
 
 @Directive({
@@ -6,12 +6,9 @@ import { TTooltipPosition } from './types';
     standalone: true,
 })
 export class Tooltip implements OnInit, OnDestroy {
-    @Input('appTooltip')
-    public tooltipText: string = '';
-    @Input()
-    public tooltipPosition: TTooltipPosition = 'top';
-    @Input()
-    public tooltipDelay: number = 200;
+    public tooltipText = input('', { alias: 'appTooltip' });
+    public tooltipPosition = input<TTooltipPosition>('top');
+    public tooltipDelay = input(200);
 
     private tooltipElement: HTMLElement | null = null;
     private isVisible: boolean = false;
@@ -23,7 +20,7 @@ export class Tooltip implements OnInit, OnDestroy {
     ) {}
 
     public ngOnInit(): void {
-        if (this.tooltipText) {
+        if (this.tooltipText()) {
             this.createTooltipElement();
         }
     }
@@ -39,7 +36,7 @@ export class Tooltip implements OnInit, OnDestroy {
     protected onMouseEnter(): void {
         this.showTimeout = setTimeout(() => {
             this.showTooltip();
-        }, this.tooltipDelay);
+        }, this.tooltipDelay());
     }
 
     @HostListener('mouseleave')
@@ -69,7 +66,7 @@ export class Tooltip implements OnInit, OnDestroy {
 
     private createTooltipElement(): void {
         this.tooltipElement = this.renderer.createElement('div');
-        this.renderer.setProperty(this.tooltipElement, 'textContent', this.tooltipText);
+        this.renderer.setProperty(this.tooltipElement, 'textContent', this.tooltipText());
         this.renderer.setStyle(this.tooltipElement, 'opacity', '0');
         this.renderer.setStyle(this.tooltipElement, 'position', 'fixed');
         this.renderer.setStyle(this.tooltipElement, 'z-index', '1000');
@@ -82,7 +79,7 @@ export class Tooltip implements OnInit, OnDestroy {
     }
 
     private showTooltip(): void {
-        if (this.tooltipElement && this.tooltipText) {
+        if (this.tooltipElement && this.tooltipText()) {
             this.isVisible = true;
             this.updateTooltipPosition();
             this.renderer.setStyle(this.tooltipElement, 'opacity', '1');
@@ -97,7 +94,7 @@ export class Tooltip implements OnInit, OnDestroy {
             let top: number;
             let left: number;
 
-            switch (this.tooltipPosition) {
+            switch (this.tooltipPosition()) {
                 case 'top':
                     top = hostRect.top - tooltipRect.height - 8;
                     left = hostRect.left + (hostRect.width - tooltipRect.width) / 2;

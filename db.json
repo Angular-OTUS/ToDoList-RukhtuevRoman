@@ -14,6 +14,12 @@
     },
     {
       "id": "3",
+      "text": "Изучить Vue",
+      "description": "Изучить основы фреймворка: интерполяция, компоненты, роутинг, state",
+      "status": "Pending"
+    },
+    {
+      "id": "4",
       "text": "Изучить Angular",
       "description": "Изучить основы фреймворка: интерполяция, компоненты, сервисы, Dependency Injection, RxJS",
       "status": "InProgress"

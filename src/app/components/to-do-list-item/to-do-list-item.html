@@ -1,31 +1,48 @@
 <div class="task-item-wrapper">
-    <div class="task-item-status">
-        <mat-checkbox [checked]="isCompleted" (change)="onChangeStatusTask($event.checked)" />
-    </div>
-    <div class="task-item" [ngClass]="{ selected: isSelected }" [appTooltip]="formLabels.listItemTooltip">
+    <div class="task-item" [ngClass]="{ 'task-item__selected': isSelected }">
         @if (isEditableTitle) {
-            <div class="task-editable">
-                <input [(ngModel)]="task.text" class="task-input" />
+            <div class="task-item__editable">
+                <input [(ngModel)]="task().text" class="task-item__input" />
                 <app-button
                     [tooltipText]="formLabels.addTooltip"
-                    class="button button--save"
+                    class="button button__primary"
                     (click)="onUpdateTask($event)"
                 >
                     {{ formLabels.save }}
                 </app-button>
             </div>
         } @else {
-            <span class="task-text">{{ task.text }}</span>
+            <div class="task-item__text">{{ task().text }}</div>
         }
-        <app-button
-            type="button"
-            class="button button--delete"
-            [tooltipText]="formLabels.deleteTooltip"
-            (click)="onDelete($event)"
-        >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 4L4 12M4 4L12 12" stroke="white" stroke-width="1.5" stroke-linecap="round" />
-            </svg>
-        </app-button>
+        <div class="task-item__buttons">
+            @if (task().status !== status.Completed) {
+                <app-button
+                    type="button"
+                    class="button button__success task-item__button"
+                    [tooltipText]="getNextStepButtonTooltip(task().status)"
+                    (click)="onChangeStatus($event)"
+                >
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M6 4L10 8L6 12"
+                            stroke="white"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+                    </svg>
+                </app-button>
+            }
+            <app-button
+                type="button"
+                class="button button__danger task-item__button"
+                [tooltipText]="formLabels.deleteTooltip"
+                (click)="onDelete($event)"
+            >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 4L4 12M4 4L12 12" stroke="white" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+            </app-button>
+        </div>
     </div>
 </div>

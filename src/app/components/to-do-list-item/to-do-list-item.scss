@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 .task-item-wrapper {
     display: flex;
     width: 100%;
@@ -5,53 +7,63 @@
 }
 
 .task-item {
-    display: flex;
+    display: grid;
     gap: 12px;
     width: 100%;
-    justify-content: space-between;
     align-items: center;
     padding: 12px 16px;
-    margin-bottom: 8px;
     border: 1px solid #ddd;
     border-radius: 8px;
     background: #f8f9fa;
     transition: all 0.2s ease;
-}
+    grid-template-columns: 1fr auto;
 
-.task-item:hover {
-    background: #e9ecef;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.task-text {
-    flex: 1;
-    margin-right: 16px;
-    font-size: 16px;
-    color: #495057;
-}
-
-.task-editable {
-    width: 100%;
-    display: flex;
-    gap: 12px;
-}
-
-.task-input {
-    background-color: inherit;
-    flex: 1;
-    font-size: 15px;
-    color: #495057;
-    border-bottom: 1px solid #000;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-
-    &:focus {
-        outline: none;
+    &:hover {
+        background: #e9ecef;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
-}
 
-.selected {
-    background-color: darken(#f8f9fa, 15%);
+    &__editable {
+        width: 100%;
+        display: flex;
+        gap: 12px;
+    }
+
+    &__input {
+        background-color: inherit;
+        flex: 1;
+        font-size: 15px;
+        color: #495057;
+        border-bottom: 1px solid #000;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+
+        &:focus {
+            outline: none;
+        }
+    }
+
+    &__text {
+        flex: 1;
+        font-size: 16px;
+        color: #495057;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__selected {
+        background-color: color.adjust(#f8f9fa, $lightness: -15%);
+    }
+
+    &__buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    &__button {
+        flex: 1;
+    }
 }

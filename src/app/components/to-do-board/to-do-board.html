@@ -1,6 +1,6 @@
 @if (viewModel$ | async; as vm) {
     @if (vm.isLoading) {
-        <app-loader [isLoading]="vm.isLoading"></app-loader>
+        <app-loader [isLoading]="vm.isLoading" />
     } @else {
         <div class="to-do-board">
             @if (vm.tasksByStatus) {
@@ -10,7 +10,7 @@
                         [tasks]="vm.tasksByStatus[status.Pending]"
                         [selectedItemId]="notSelectedItemId"
                         [selectedItemIdByDoubleClick]="vm.selectedItemIdByDoubleClick"
-                    ></app-to-do-group>
+                    />
                 </div>
                 <div class="to-do-board__group">
                     <app-to-do-group
@@ -18,7 +18,7 @@
                         [tasks]="vm.tasksByStatus[status.InProgress]"
                         [selectedItemId]="notSelectedItemId"
                         [selectedItemIdByDoubleClick]="vm.selectedItemIdByDoubleClick"
-                    ></app-to-do-group>
+                    />
                 </div>
                 <div class="to-do-board__group">
                     <app-to-do-group
@@ -26,7 +26,7 @@
                         [tasks]="vm.tasksByStatus[status.Completed]"
                         [selectedItemId]="notSelectedItemId"
                         [selectedItemIdByDoubleClick]="vm.selectedItemIdByDoubleClick"
-                    ></app-to-do-group>
+                    />
                 </div>
             }
         </div>

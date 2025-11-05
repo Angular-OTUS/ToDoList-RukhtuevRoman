@@ -1,6 +1,6 @@
 @if (viewModel$ | async; as vm) {
     @if (vm.isLoading) {
-        <app-loader [isLoading]="vm.isLoading"></app-loader>
+        <app-loader [isLoading]="vm.isLoading" />
     } @else {
         <div class="to-do-backlog">
             <div class="to-do-backlog__group">
@@ -13,7 +13,7 @@
                             [tasks]="vm.tasksByStatus[status.Pending]"
                             [selectedItemId]="vm.selectedItemId"
                             [selectedItemIdByDoubleClick]="vm.selectedItemIdByDoubleClick"
-                        ></app-to-do-group>
+                        />
                     } @else {
                         <span>{{ formLabels.noTasks }}</span>
                     }
@@ -24,7 +24,7 @@
             </div>
         </div>
         <app-modal [title]="formLabels.newTaskFormTitle" [isVisible]="showNewTaskModal" (closed)="onCloseNewTaskModal()"
-            ><app-to-do-create-item (formSent)="onCloseNewTaskModal()"></app-to-do-create-item
-        ></app-modal>
+            ><app-to-do-create-item (formSent)="onCloseNewTaskModal()"
+        /></app-modal>
     }
 }

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { NOT_SELECTED_ITEM_ID, STATUS_LABELS } from '../../constants';
 import { TaskStoreService } from '../../services';
-import { ITask } from '../../interfaces';
+import { ITaskViewModel } from '../../interfaces';
 import { EStatus } from '../../enums';
 import { Loader } from '../loader';
 import { ToDoGroup } from '../to-do-group';
@@ -18,9 +18,7 @@ import { ToDoGroup } from '../to-do-group';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToDoBoard implements OnInit {
-    protected isLoading$: Observable<boolean>;
-    protected tasksByStatus$: Observable<Record<EStatus, ITask[]>>;
-    protected selectedItemIdByDoubleClick$: Observable<string>;
+    protected viewModel$: Observable<ITaskViewModel>;
     protected readonly statusLabels = STATUS_LABELS;
     protected readonly status = EStatus;
     protected readonly notSelectedItemId = NOT_SELECTED_ITEM_ID;
@@ -29,9 +27,7 @@ export class ToDoBoard implements OnInit {
         private router: Router,
         private taskStore: TaskStoreService,
     ) {
-        this.tasksByStatus$ = this.taskStore.tasksByStatus$;
-        this.isLoading$ = this.taskStore.isLoading$;
-        this.selectedItemIdByDoubleClick$ = this.taskStore.selectedItemIdByDoubleClick$;
+        this.viewModel$ = this.taskStore.viewModel$;
     }
 
     public ngOnInit(): void {

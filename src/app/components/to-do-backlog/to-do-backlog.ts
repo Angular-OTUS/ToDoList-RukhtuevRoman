@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { NOT_SELECTED_ITEM_ID, FORM_LABELS } from '../../constants';
 import { TaskStoreService } from '../../services';
 import { EStatus } from '../../enums';
-import { ITask } from '../../interfaces';
+import { ITaskViewModel } from '../../interfaces';
 import { Loader } from '../loader';
 import { ToDoGroup } from '../to-do-group';
 import { ToDoCreateItem } from '../to-do-create-item';
@@ -21,11 +21,7 @@ import { Button } from '../button';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToDoBacklog implements OnInit {
-    protected isLoading$: Observable<boolean>;
-    protected tasksByStatus$: Observable<Record<EStatus, ITask[]>>;
-    protected selectedItemId$: Observable<string>;
-    protected selectedTask$: Observable<ITask | undefined>;
-    protected selectedItemIdByDoubleClick$: Observable<string>;
+    protected viewModel$: Observable<ITaskViewModel>;
     protected readonly formLabels = FORM_LABELS;
     protected readonly status = EStatus;
     protected readonly notSelectedItemId = NOT_SELECTED_ITEM_ID;
@@ -35,11 +31,7 @@ export class ToDoBacklog implements OnInit {
         private router: Router,
         private taskStore: TaskStoreService,
     ) {
-        this.tasksByStatus$ = this.taskStore.tasksByStatus$;
-        this.isLoading$ = this.taskStore.isLoading$;
-        this.selectedItemId$ = this.taskStore.selectedItemId$;
-        this.selectedTask$ = this.taskStore.selectedTask$;
-        this.selectedItemIdByDoubleClick$ = this.taskStore.selectedItemIdByDoubleClick$;
+        this.viewModel$ = this.taskStore.viewModel$;
     }
 
     public ngOnInit(): void {

@@ -34,6 +34,12 @@ npm run start
 npm run start:api
 ```
 
+Запуск frontend и json-server одной командой
+
+```bash
+npm run dev
+```
+
 Проект в браузере
 
 ```bash

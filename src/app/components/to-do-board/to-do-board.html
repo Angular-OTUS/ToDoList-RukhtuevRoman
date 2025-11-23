@@ -6,7 +6,7 @@
             @if (vm.tasksByStatus) {
                 <div class="to-do-board__group">
                     <app-to-do-group
-                        [title]="statusLabels[status.Pending]"
+                        [title]="statusLabels[status.Pending] | translate"
                         [tasks]="vm.tasksByStatus[status.Pending]"
                         [selectedItemId]="notSelectedItemId"
                         [selectedItemIdByDoubleClick]="vm.selectedItemIdByDoubleClick"
@@ -14,7 +14,7 @@
                 </div>
                 <div class="to-do-board__group">
                     <app-to-do-group
-                        [title]="statusLabels[status.InProgress]"
+                        [title]="statusLabels[status.InProgress] | translate"
                         [tasks]="vm.tasksByStatus[status.InProgress]"
                         [selectedItemId]="notSelectedItemId"
                         [selectedItemIdByDoubleClick]="vm.selectedItemIdByDoubleClick"
@@ -22,7 +22,7 @@
                 </div>
                 <div class="to-do-board__group">
                     <app-to-do-group
-                        [title]="statusLabels[status.Completed]"
+                        [title]="statusLabels[status.Completed] | translate"
                         [tasks]="vm.tasksByStatus[status.Completed]"
                         [selectedItemId]="notSelectedItemId"
                         [selectedItemIdByDoubleClick]="vm.selectedItemIdByDoubleClick"

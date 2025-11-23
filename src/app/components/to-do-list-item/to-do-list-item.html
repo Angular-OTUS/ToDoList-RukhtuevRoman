@@ -4,11 +4,11 @@
             <div class="task-item__editable">
                 <input [(ngModel)]="task().text" class="task-item__input" />
                 <app-button
-                    [tooltipText]="formLabels.addTooltip"
+                    [tooltipText]="'form.addTooltip' | translate"
                     class="button button__primary"
                     (click)="onUpdateTask($event)"
                 >
-                    {{ formLabels.save }}
+                    {{ 'form.save' | translate }}
                 </app-button>
             </div>
         } @else {
@@ -36,7 +36,7 @@
             <app-button
                 type="button"
                 class="button button__danger task-item__button"
-                [tooltipText]="formLabels.deleteTooltip"
+                [tooltipText]="'form.deleteTooltip' | translate"
                 (click)="onDelete($event)"
             >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

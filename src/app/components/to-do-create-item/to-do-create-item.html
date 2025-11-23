@@ -1,12 +1,12 @@
 <form [formGroup]="taskForm" (ngSubmit)="onAdd()">
     <mat-form-field class="add-task-form-field">
-        <input matInput formControlName="text" [placeholder]="formLabels.addPlaceholder" />
+        <input matInput formControlName="text" [placeholder]="'form.addPlaceholder' | translate" />
         @if (taskForm.get('text')?.invalid && (taskForm.get('text')?.touched || taskForm.get('text')?.dirty)) {
             <mat-error>
                 @if (taskForm.get('text')?.errors?.['required']) {
-                    {{ formLabels.titleRequired }}
+                    {{ 'form.titleRequired' | translate }}
                 } @else if (taskForm.get('text')?.errors?.['minlength']) {
-                    {{ formLabels.minLengthTitle }}
+                    {{ 'form.minLengthTitle' | translate }}
                 }
             </mat-error>
         }
@@ -15,15 +15,15 @@
         <textarea
             matInput
             formControlName="description"
-            [placeholder]="formLabels.addDescriptionPlaceholder"
+            [placeholder]="'form.addDescriptionPlaceholder' | translate"
         ></textarea>
     </mat-form-field>
     <app-button
         type="submit"
-        [tooltipText]="formLabels.addTooltip"
+        [tooltipText]="'form.addTooltip' | translate"
         [disabled]="taskForm.invalid"
         class="button button__success"
     >
-        {{ formLabels.add }}
+        {{ 'form.add' | translate }}
     </app-button>
 </form>

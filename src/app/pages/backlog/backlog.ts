@@ -1,16 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { PAGES } from '../../constants';
 import { MainLayout } from '../../layouts';
 import { ToDoBacklog } from '../../components';
+import { TranslatePipe } from '../../pipes';
 
 @Component({
     selector: 'app-backlog',
     standalone: true,
-    imports: [MainLayout, ToDoBacklog],
+    imports: [MainLayout, ToDoBacklog, TranslatePipe],
     templateUrl: './backlog.html',
     styleUrl: './backlog.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Backlog {
-    protected pages = PAGES;
-}
+export class Backlog {}

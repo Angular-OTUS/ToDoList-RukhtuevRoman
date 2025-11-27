@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TaskStoreService, ToastService } from '../../services';
-import { FORM_LABELS, NOT_SELECTED_ITEM_ID } from '../../constants';
+import { TaskStoreService, ToastService, TranslationService } from '../../services';
+import { NOT_SELECTED_ITEM_ID } from '../../constants';
+import { TranslatePipe } from '../../pipes';
 import { ITask } from '../../interfaces';
 import { EStatus } from '../../enums';
 import { Button } from '../button';
@@ -10,7 +11,7 @@ import { Button } from '../button';
 @Component({
     selector: 'app-to-do-list-item',
     standalone: true,
-    imports: [Button, NgClass, FormsModule],
+    imports: [Button, NgClass, FormsModule, TranslatePipe],
     templateUrl: './to-do-list-item.html',
     styleUrl: './to-do-list-item.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,10 +20,9 @@ export class ToDoListItem {
     public task = input.required<ITask>();
     public selectedItemId = input(NOT_SELECTED_ITEM_ID);
     public selectedItemIdByDoubleClick = input(NOT_SELECTED_ITEM_ID);
+    private translationService = inject(TranslationService);
 
     protected readonly delete = output<string>();
-
-    protected readonly formLabels = FORM_LABELS;
     protected readonly status = EStatus;
 
     constructor(
@@ -46,9 +46,9 @@ export class ToDoListItem {
     protected getNextStepButtonTooltip(status: EStatus): string {
         switch (status) {
             case EStatus.Pending:
-                return this.formLabels.makeProgressing;
+                return this.translationService.instant('form.makeProgressing');
             case EStatus.InProgress:
-                return this.formLabels.makeCompleted;
+                return this.translationService.instant('form.makeCompleted');
             default:
                 return '';
         }
@@ -62,11 +62,11 @@ export class ToDoListItem {
             this.task(),
             () => {
                 this.taskStore.setSelectedItemIdByDoubleClick(NOT_SELECTED_ITEM_ID);
-                this.toastService.success(this.formLabels.updateSuccess);
+                this.toastService.success(this.translationService.instant('form.updateSuccess'));
             },
             () => {
                 this.taskStore.setSelectedItemIdByDoubleClick(NOT_SELECTED_ITEM_ID);
-                this.toastService.error(this.formLabels.updateError);
+                this.toastService.error(this.translationService.instant('form.updateError'));
             },
         );
     }
@@ -78,10 +78,10 @@ export class ToDoListItem {
         this.taskStore.updateTask(
             { ...this.task(), status: this.getNextStatus(this.task().status) },
             () => {
-                this.toastService.success(this.formLabels.updateSuccess);
+                this.toastService.success(this.translationService.instant('form.updateSuccess'));
             },
             () => {
-                this.toastService.error(this.formLabels.updateError);
+                this.toastService.error(this.translationService.instant('form.updateError'));
             },
         );
     }

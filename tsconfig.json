@@ -15,7 +15,10 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "preserve",
-    "noErrorTruncation": true
+    "noErrorTruncation": true,
+    "types": [
+      "@angular/localize"
+    ]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

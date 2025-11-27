@@ -2,8 +2,9 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { NOT_SELECTED_ITEM_ID, FORM_LABELS } from '../../constants';
+import { NOT_SELECTED_ITEM_ID } from '../../constants';
 import { TaskStoreService } from '../../services';
+import { TranslatePipe } from '../../pipes';
 import { EStatus } from '../../enums';
 import { ITaskViewModel } from '../../interfaces';
 import { Loader } from '../loader';
@@ -15,14 +16,13 @@ import { Button } from '../button';
 @Component({
     selector: 'app-to-do-backlog',
     standalone: true,
-    imports: [AsyncPipe, Loader, ToDoGroup, ToDoCreateItem, Modal, Button],
+    imports: [AsyncPipe, Loader, ToDoGroup, ToDoCreateItem, Modal, Button, TranslatePipe],
     templateUrl: './to-do-backlog.html',
     styleUrl: './to-do-backlog.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToDoBacklog implements OnInit {
     protected viewModel$: Observable<ITaskViewModel>;
-    protected readonly formLabels = FORM_LABELS;
     protected readonly status = EStatus;
     protected readonly notSelectedItemId = NOT_SELECTED_ITEM_ID;
     protected showNewTaskModal = false;

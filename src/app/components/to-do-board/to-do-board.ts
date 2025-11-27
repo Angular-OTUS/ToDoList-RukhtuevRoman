@@ -3,6 +3,7 @@ import { AsyncPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { NOT_SELECTED_ITEM_ID, STATUS_LABELS } from '../../constants';
+import { TranslatePipe } from '../../pipes';
 import { TaskStoreService } from '../../services';
 import { ITaskViewModel } from '../../interfaces';
 import { EStatus } from '../../enums';
@@ -12,7 +13,7 @@ import { ToDoGroup } from '../to-do-group';
 @Component({
     selector: 'app-to-do-board',
     standalone: true,
-    imports: [AsyncPipe, Loader, ToDoGroup],
+    imports: [AsyncPipe, Loader, ToDoGroup, TranslatePipe],
     templateUrl: './to-do-board.html',
     styleUrl: './to-do-board.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,

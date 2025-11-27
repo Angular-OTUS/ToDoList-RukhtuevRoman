@@ -5,7 +5,7 @@
         <div class="to-do-backlog">
             <div class="to-do-backlog__group">
                 <app-button type="button" class="button button__primary" (click)="onShowNewTaskModal()">
-                    {{ formLabels.addTooltip }}
+                    {{ 'form.addTooltip' | translate }}
                 </app-button>
                 @if (vm.tasksByStatus) {
                     @if (vm.tasksByStatus[status.Pending].length > 0) {
@@ -15,7 +15,7 @@
                             [selectedItemIdByDoubleClick]="vm.selectedItemIdByDoubleClick"
                         />
                     } @else {
-                        <span>{{ formLabels.noTasks }}</span>
+                        <span>{{ 'form.noTasks' | translate }}</span>
                     }
                 }
             </div>
@@ -23,7 +23,10 @@
                 {{ vm.selectedTask?.description || '' }}
             </div>
         </div>
-        <app-modal [title]="formLabels.newTaskFormTitle" [isVisible]="showNewTaskModal" (closed)="onCloseNewTaskModal()"
+        <app-modal
+            [title]="'form.newTaskFormTitle' | translate"
+            [isVisible]="showNewTaskModal"
+            (closed)="onCloseNewTaskModal()"
             ><app-to-do-create-item (formSent)="onCloseNewTaskModal()"
         /></app-modal>
     }

@@ -1,15 +1,16 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { Router, NavigationEnd, RouterLink } from '@angular/router';
 import { MatListItem, MatNavList } from '@angular/material/list';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs/operators';
+import { TranslatePipe } from '../../pipes';
 import { INavItem } from '../../interfaces';
 import { NAV_ITEMS } from '../../constants';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-navigation',
     standalone: true,
-    imports: [MatNavList, MatListItem, RouterLink],
+    imports: [MatNavList, MatListItem, RouterLink, TranslatePipe],
     templateUrl: './navigation.html',
     styleUrl: './navigation.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
